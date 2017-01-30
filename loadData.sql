@@ -1,37 +1,37 @@
 ---Students---
 INSERT INTO Student(sid, name, major)
-VALUES(1, Klay, ECE);
+VALUES(1, "Klay", "ECE");
 
 INSERT INTO Student(sid, name, major)
-VALUES(2, Kevin, CS);
+VALUES(2, "Kevin", "CS");
 
 INSERT INTO Student(sid, name, major)
-VALUES(3, Steph, EE);
+VALUES(3, "Steph", "EE");
 
 INSERT INTO Student(sid, name, major)
-VALUES(4, Zaza, STAT);
+VALUES(4, "Zaza", "STAT");
 
 INSERT INTO Student(sid, name, major)
-VALUES(5, Green, CS);
+VALUES(5, "Green", "CS");
 
 ---Course---
 INSERT INTO Course(cid, title)
-VALUES(1, EECS482);
+VALUES(1, "EECS482");
 
 INSERT INTO Course(cid, title)
-VALUES(2, EECS484);
+VALUES(2, "EECS484");
 
 INSERT INTO Course(cid, title)
-VALUES(3, EECS485);
+VALUES(3, "EECS485");
 
 INSERT INTO Course(cid, title)
-VALUES(4, EECS486);
+VALUES(4, "EECS486");
 
 INSERT INTO Course(cid, title)
-VALUES(5, EECS281);
+VALUES(5, "EECS281");
 
 INSERT INTO Course(cid, title)
-VALUES(6, EECS501);
+VALUES(6, "EECS501");
 
 ---Enrolled---
 INSERT INTO Enrolled(sid, cid)
