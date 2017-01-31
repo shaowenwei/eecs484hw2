@@ -25,7 +25,11 @@ PROMPT Question 5.2;
 -- Short Story and Horror books. In general, there could be two different authors
 -- with the same name, one who has written a horror book and another
 -- who has written short stories. 
-
+SELECT A.first_name, A.last_name
+FROM authors A, subjects S1, subjects S2, books B1, books B2
+WHERE S2.subject_id = B2.subject_id AND S1.subject_id = B1.subject_id 
+AND A.author_id = B1.author_id AND A.author_id = B2.author_id
+AND S1.subject = 'Short Story' AND S2.subject = 'Horror';
 
 -- Q3
 PROMPT Question 5.3;
@@ -35,37 +39,98 @@ PROMPT Question 5.3;
 -- the publication requirements. You can also use views. But DROP any views at the end of your query.
 -- Using a single query is likely to be more 
 -- efficient in practice. Moreover, there shouldn't be any duplication for the returned records.
-
+SELECT B.title, E.publication, B.author_id, A.last_name, A.first_name
+FROM authors A, editions E, books B
+WHERE 
+A.author_id = B.author_id AND B.book_id = E.book_id
+AND B.author_id IN(
+	SELECT DISTINCT B.author_id
+	FROM editions E, books B
+	WHERE
+	E.book_id = B.book_id AND
+	E.publication > '1999-10-01' AND E.publication < '2001-10-01'
+	);
 
 -- Q4
 PROMPT Question 5.4;
 -- Find id, first name, and last name of authors who wrote books for all the 
 -- subjects of books written by Edgar Allen Poe.
-
+SELECT B.title, E.publication, B.author_id, A.last_name, A.first_name
+FROM authors A, editions E, books B
+WHERE 
+A.author_id = B.author_id AND B.book_id = E.book_id
+AND B.author_id IN(
+		SELECT DISTINCT B.author_id
+		FROM books B
+	MINUS
+		SELECT DISTINCT author_id 
+		FROM
+		((
+		SELECT B.author_id, AL.subject_id
+		FROM
+		books B,
+			(SELECT B2.subject_id
+			FROM authors A2, books B2
+			WHERE
+			B2.author_id = A2.author_id
+			AND A2.first_name = 'Edgar Allen' 
+			AND A2.last_name = 'Poe')AL
+			)
+		MINUS
+		(
+		SELECT B.author_id, B.subject_id
+		FROM books B
+		))S
+);
 
 -- Q5
 PROMPT Question 5.5;
 -- Find the book_id and its corresponding total stock available for all book editions ordered
 -- in descending order by the total stock. Name the column for total stock as TOTAL_STOCK. 
 -- NOTE: You do not need to consider editions of books that are not in the Stock Table.
-
+SELECT B.book_id, SUM(S.stock) AS TOTAL_STOCK
+FROM books B, editions E, stock S 
+WHERE 
+B.book_id = E.book_id AND E.isbn = S.isbn
+GROUP BY B.book_id
+ORDER BY TOTAL_STOCK DESC;
 
 -- Q6
 PROMPT Question 5.6;
 -- Find the name and id of all publishers who have published books for authors
 -- who have written exactly 2 books. Result should be ordered by publisher id in descending order;
-
+SELECT DISTINCT P.name, P.publisher_id
+FROM publishers P, Books B, editions E
+WHERE 
+P.publisher_id = E.publisher_id AND E.book_id = B.book_id
+AND B.author_id IN(
+	SELECT B.author_id
+	FROM books B
+	GROUP BY B.author_id
+	HAVING COUNT(*) = 2
+);
 
 -- Q7
 PROMPT Question 5.7;
 -- Find the last name and first name of authors who haven't written any book.
 -- Name the last name column as l_name, the first name column as f_name.
-
+SELECT DISTINCT A.last_name AS l_name, A.first_name AS f_name
+FROM authors A, books B
+WHERE A.author_id NOT IN(
+	 SELECT DISTINCT B.author_id
+	 FROM books B
+);
 
 -- Q8
 PROMPT Question 5.8;
 -- Find author_id of authors who have written exactly 1 book. Name the author_id column as aid. 
 -- Order the id in ascending order. 
-
+SELECT A.author_id AS aid
+FROM authors A, books B
+WHERE 
+A.author_id = B.author_id 
+GROUP BY A.author_id
+HAVING COUNT(*) = 1
+ORDER BY aid DESC;
 
 
